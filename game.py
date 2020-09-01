@@ -2,10 +2,14 @@
 
 import turtle, os, pyautogui, random
 
-def relocate(*args):
-    x = random.randint(-280, 280)
-    y = random.randint(-280, 280)
-    circle.setposition(x, y)
+def changeColor(*args):
+    if circle.fillcolor() == "red":
+        circle.fillcolor("blue")
+    else: 
+        circle.fillcolor("red")
+
+# TODO: "set" class to hold patterns of colored dots
+
 
 # set up a screen
 screen = turtle.Screen()
@@ -27,7 +31,7 @@ border_pen.hideturtle()
 
 # create a circle
 circle = turtle.Turtle()
-circle.color("red")
+circle.color("gray","red")
 circle.shape("circle")
 circle.penup()
 circle.speed(0)
@@ -36,4 +40,4 @@ circle.setposition(200,200)
 
 #Main game loop
 while True:
-    circle.onclick(relocate)
+    circle.onclick(changeColor)
