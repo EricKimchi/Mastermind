@@ -4,12 +4,22 @@ import turtle, os, pyautogui, random
 
 def changeColor(*args):
     if circle.fillcolor() == "red":
+        circle.fillcolor("orange")
+    elif circle.fillcolor() == "orange":
+        circle.fillcolor("yellow")
+    elif circle.fillcolor() == "yellow":
+        circle.fillcolor("green")
+    elif circle.fillcolor() == "green":
         circle.fillcolor("blue")
-    else: 
+    elif circle.fillcolor() == "blue":
+        circle.fillcolor("purple")
+    else:
         circle.fillcolor("red")
 
-# TODO: "set" class to hold patterns of colored dots
-
+# TODO: "set" class to track patterns of colored dots
+class Set:
+    level = 0
+    pattern = ['gray','gray','gray','gray']
 
 # set up a screen
 screen = turtle.Screen()
