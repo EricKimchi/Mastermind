@@ -1,25 +1,33 @@
 # Mastermind game
 
-import turtle, os, pyautogui, random
+import turtle, os, random
 
-def changeColor(*args):
-    if circle.fillcolor() == "red":
-        circle.fillcolor("orange")
-    elif circle.fillcolor() == "orange":
-        circle.fillcolor("yellow")
-    elif circle.fillcolor() == "yellow":
-        circle.fillcolor("green")
-    elif circle.fillcolor() == "green":
-        circle.fillcolor("blue")
-    elif circle.fillcolor() == "blue":
-        circle.fillcolor("purple")
+# dots cycle through six colors
+def changeColor(dot):
+    colorcode = ["red","orange","yellow","green","blue","purple"]
+    if dot.colorid == 5:
+        dot.circle.fillcolor("red")
+        dot.colorid = 0
     else:
-        circle.fillcolor("red")
+        dot.circle.fillcolor(colorcode[dot.colorid + 1])
+        dot.colorid += 1
 
-# TODO: "set" class to track patterns of colored dots
-class Set:
-    level = 0
-    pattern = ['gray','gray','gray','gray']
+# quad class to track patterns
+class Quad:
+    def __init__(self):
+        self.level = 0
+        self.pattern = ['gray','gray','gray','gray']
+        self.hint = ['gray','gray','gray','gray']
+
+# dot class
+class Dot:
+    def __init__(self):
+        self.circle = turtle.Turtle()
+        self.circle.color("gray","red")
+        self.circle.shape("circle")
+        self.id = 0
+        self.colorid = 0
+    
 
 # set up a screen
 screen = turtle.Screen()
@@ -40,14 +48,17 @@ for side in range(4):
 border_pen.hideturtle()
 
 # create a circle
-circle = turtle.Turtle()
-circle.color("gray","red")
-circle.shape("circle")
-circle.penup()
-circle.speed(0)
-circle.setposition(200,200)
+dot1 = Dot()
+dot1.circle.penup()
+dot1.circle.speed(0)
+dot1.circle.setposition(200,200)
 
+# make 8 Quads to track the guesses
+quads = []
+for i in range(8):
+    quads.append(Quad())
+    quads[i].level = i
 
 #Main game loop
 while True:
-    circle.onclick(changeColor)
+    dot1.circle.onclick(lambda x, y: changeColor(dot1))
