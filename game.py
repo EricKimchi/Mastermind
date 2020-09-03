@@ -17,10 +17,14 @@ class Dot():
     def __init__(self):
         self.dot = pygame.image.load('red.png')
         self.id = 0
+        self.x = 0
+        self.y = 0
         self.colorid = 0
 
 # create dots
-dot1 = Dot()
+dots = []
+for i in range (24):
+    dots.append(Dot())
 
 def changeColor(dot):
     red = pygame.image.load('red.png')
@@ -36,7 +40,6 @@ def changeColor(dot):
         if dot.colorid == 5:
             dot.dot = red
             dot.colorid = 0
-            print("here")
             break
         elif dot.colorid == i:
             dot.dot = colorCode[i + 1]
@@ -51,14 +54,21 @@ while active:
     # background color to light gray
     screen.fill((180, 180, 180))
 
-    # draw dot
-    screen.blit(dot1.dot, (300, 400))
+    # draw dots
+    x = 300
+    y = 200
+    col = 1
+    for i in range (24):
+        screen.blit(dots[i].dot, (x, y))
+        dots[i].x = x
+        dots[i].y = y
+        x += 50
+        if col == 4:
+            x = 300
+            y += 50
+            col = 0
+        col += 1
     pygame.display.update()
-
-
-
-
-
 
 
     for event in pygame.event.get():
@@ -66,6 +76,7 @@ while active:
             active = False
         if event.type == pygame.MOUSEBUTTONDOWN:
             if event.button == 1:
-                if 300 < pygame.mouse.get_pos()[0] < 332 and 400 < pygame.mouse.get_pos()[1] < 432:
-                    changeColor(dot1)
+                for dot in dots:
+                    if dot.x < pygame.mouse.get_pos()[0] < dot.x + 32 and dot.y < pygame.mouse.get_pos()[1] < dot.y + 32:
+                        changeColor(dot)
 
