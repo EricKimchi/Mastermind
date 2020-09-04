@@ -46,10 +46,13 @@ def changeColor(dot):
 
 
 # reset dots
-def reset():
+def resetGame():
     for dot in dots:
         dot.dot = pygame.image.load('gray.png')
         dot.colorid = 6
+    for i in range (4*(rows-1), 4*rows):
+        dots[i].dot = pygame.image.load('red.png')
+        dots[i].colorid = 0
 
 
 # number of rows
@@ -147,6 +150,9 @@ while active:
                     shiftAbove()
                     if won == True:
                         print("You Win!")
+                    elif dots[4].colorid != 6:
+                        print("You LOSE!")
+                        resetGame()
                     won = True
                 for i in range(4*(rows-1), 4*rows):
                     if dots[i].x < pygame.mouse.get_pos()[0] < dots[i].x + 32 and dots[i].y < pygame.mouse.get_pos()[1] < dots[i].y + 32:
