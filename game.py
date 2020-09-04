@@ -45,15 +45,28 @@ def changeColor(dot):
             break
 
 
+# reset dots
+def reset():
+    for dot in dots:
+        dot.dot = pygame.image.load('gray.png')
+        dot.colorid = 6
+
+
 # number of rows
 rows = 8
 
 
 # shift dots up one row
 def shiftAbove():
-    for index in range (4*rows):
-        dots[index - 4].dot = dots[index].dot
-        dots[index - 4].colorid = dots[index].colorid
+    # shift all colors up one row
+    for index in range (4, 4*rows - 4):
+        dots[index].dot = dots[index + 4].dot
+        dots[index].colorid = dots[index + 4].colorid
+    # reset bottom dots to red
+    for i in range (4*(rows-1), 4*rows):
+        dots[i].dot = pygame.image.load('red.png')
+        dots[i].colorid = 0
+
 
 
 # create dots
@@ -62,6 +75,7 @@ for i in range (4*rows):
     dots.append(Dot())
     dots[i].id = i
 
+# set bottom row dots to red
 for i in range (4*(rows-1), 4*rows):
     changeColor(dots[i])
 
@@ -70,8 +84,30 @@ for i in range (4*(rows-1), 4*rows):
 guess = pygame.image.load('guess.png')
 
 
+# set random pattern
+def setPattern():
+    red = pygame.image.load('red.png')
+    orange = pygame.image.load('orange.png')
+    yellow = pygame.image.load('yellow.png')
+    green = pygame.image.load('green.png')
+    blue = pygame.image.load('blue.png')
+    purple = pygame.image.load('purple.png')
+
+    patternCode = []
+    colorCode = [red, orange, yellow, green, blue, purple]
+    for i in range (4):
+        num = random.randint(0, 5)
+        dots[i].dot = colorCode[num]
+        dots[i].colorid = num
+        patternCode.append(num)
+    return patternCode
+
+
+
 # main game loop
 active = True
+won = True
+pattern = setPattern()
 while active:
 
     # background color to light gray
@@ -105,7 +141,13 @@ while active:
         if event.type == pygame.MOUSEBUTTONDOWN:
             if event.button == 1:
                 if 300 < pygame.mouse.get_pos()[0] < 428 and 50 + 50*rows < pygame.mouse.get_pos()[1] < 82 + 50*rows:
-                    print('pressed')
+                    for i in range (4):
+                        if dots[4*rows - 4 + i].colorid != pattern[i]:
+                            won = False
+                    shiftAbove()
+                    if won == True:
+                        print("You Win!")
+                    won = True
                 for i in range(4*(rows-1), 4*rows):
                     if dots[i].x < pygame.mouse.get_pos()[0] < dots[i].x + 32 and dots[i].y < pygame.mouse.get_pos()[1] < dots[i].y + 32:
                         changeColor(dots[i])
