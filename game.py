@@ -46,10 +46,15 @@ def changeColor(dot):
 
 
 # reset dots
-def reset():
+def resetGame():
     for dot in dots:
         dot.dot = pygame.image.load('gray.png')
         dot.colorid = 6
+    for i in range (4*(rows-1), 4*rows):
+        dots[i].dot = pygame.image.load('red.png')
+        dots[i].colorid = 0
+    
+    return setPattern()
 
 
 # number of rows
@@ -80,8 +85,9 @@ for i in range (4*(rows-1), 4*rows):
     changeColor(dots[i])
 
 
-# create guess button
+# create guess and reset buttons
 guess = pygame.image.load('guess.png')
+reset = pygame.image.load('reset.png')
 
 
 # set random pattern
@@ -107,6 +113,8 @@ def setPattern():
 # main game loop
 active = True
 won = True
+freeze = False
+# set random pattern
 pattern = setPattern()
 while active:
 
@@ -114,7 +122,7 @@ while active:
     screen.fill((180, 180, 180))
 
     # draw dots
-    x = 100
+    x = 200
     y = 100
     col = 1
 
@@ -124,31 +132,55 @@ while active:
         dots[i].y = y
         x += 50
         if col == 4:
-            x = 100
+            x = 200
             y += 50
             col = 0
         col += 1
 
-    # draw guess button
-    screen.blit(guess, (300, 50 + 50*rows))
-    
+    # draw guess and reset buttons
+    screen.blit(guess, (400, 50 + 50*rows))
+    screen.blit(reset, (400, 50*rows))
+
     pygame.display.update()
 
-
+    # game events
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             active = False
         if event.type == pygame.MOUSEBUTTONDOWN:
-            if event.button == 1:
-                if 300 < pygame.mouse.get_pos()[0] < 428 and 50 + 50*rows < pygame.mouse.get_pos()[1] < 82 + 50*rows:
+            if event.button == 1 and freeze == False:
+                # guess button is pressed
+                if 400 < pygame.mouse.get_pos()[0] < 528 and 50 + 50*rows < pygame.mouse.get_pos()[1] < 82 + 50*rows:
+                    # compare guessed pattern and random pattern
                     for i in range (4):
                         if dots[4*rows - 4 + i].colorid != pattern[i]:
+                            # won set to false if a dot is not matching
                             won = False
+                    # shift dots up one row
                     shiftAbove()
                     if won == True:
                         print("You Win!")
+                        freeze = True
+                    elif dots[4].colorid != 6:
+                        # all guesses used
+                        print("You LOSE!")
+                        freeze = True
                     won = True
+
+                # guessing dots are clicked
                 for i in range(4*(rows-1), 4*rows):
-                    if dots[i].x < pygame.mouse.get_pos()[0] < dots[i].x + 32 and dots[i].y < pygame.mouse.get_pos()[1] < dots[i].y + 32:
+                    if dots[i].x < pygame.mouse.get_pos()[0] < dots[i].x + 30 and dots[i].y < pygame.mouse.get_pos()[1] < dots[i].y + 30:
                         changeColor(dots[i])
+
+                # reset button is pressed
+                if 400 < pygame.mouse.get_pos()[0] < 528 and 50*rows < pygame.mouse.get_pos()[1] < 32 + 50*rows:
+                    pattern = resetGame()
+
+            elif event.button == 1 and freeze == True:
+                # reset button is pressed
+                if 400 < pygame.mouse.get_pos()[0] < 528 and 50*rows < pygame.mouse.get_pos()[1] < 32 + 50*rows:
+                    pattern = resetGame()
+                    freeze = False
+
+
 
