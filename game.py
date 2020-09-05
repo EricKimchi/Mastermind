@@ -73,7 +73,6 @@ def shiftAbove():
         dots[i].colorid = 0
 
 
-
 # create dots
 dots = []
 for i in range (4*rows):
@@ -84,6 +83,11 @@ for i in range (4*rows):
 for i in range (4*(rows-1), 4*rows):
     changeColor(dots[i])
 
+
+# create hint dots
+hints = []
+for i in range (4*rows - 8):
+    hints.append(pygame.image.load('hintgray.png'))
 
 # create guess and reset buttons
 guess = pygame.image.load('guess.png')
@@ -136,6 +140,30 @@ while active:
             y += 50
             col = 0
         col += 1
+
+    # draw hint dots
+    x = 150
+    y = 145
+    col = 1
+    level = 0
+
+    for i in range (4*rows - 8):
+        screen.blit(hints[i], (x, y))
+        dots[i].x = x
+        dots[i].y = y
+        x += 20
+        level += 1
+        if col == 2:
+            x = 150
+            if level == 4:
+                y += 30
+                level = 0
+            else:
+                y += 20
+            col = 1
+        else:
+            col += 1
+
 
     # draw guess and reset buttons
     screen.blit(guess, (400, 50 + 50*rows))
