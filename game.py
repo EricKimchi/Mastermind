@@ -53,7 +53,8 @@ def resetGame():
     for i in range (4*(rows-1), 4*rows):
         dots[i].dot = pygame.image.load('red.png')
         dots[i].colorid = 0
-    setPattern()
+    
+    return setPattern()
 
 
 # number of rows
@@ -112,6 +113,8 @@ def setPattern():
 # main game loop
 active = True
 won = True
+freeze = False
+# set random pattern
 pattern = setPattern()
 while active:
 
@@ -140,24 +143,44 @@ while active:
 
     pygame.display.update()
 
-
+    # game events
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             active = False
         if event.type == pygame.MOUSEBUTTONDOWN:
-            if event.button == 1:
+            if event.button == 1 and freeze == False:
+                # guess button is pressed
                 if 400 < pygame.mouse.get_pos()[0] < 528 and 50 + 50*rows < pygame.mouse.get_pos()[1] < 82 + 50*rows:
+                    # compare guessed pattern and random pattern
                     for i in range (4):
                         if dots[4*rows - 4 + i].colorid != pattern[i]:
+                            # won set to false if a dot is not matching
                             won = False
+                    # shift dots up one row
                     shiftAbove()
                     if won == True:
                         print("You Win!")
+                        freeze = True
                     elif dots[4].colorid != 6:
+                        # all guesses used
                         print("You LOSE!")
-                        resetGame()
+                        freeze = True
                     won = True
+
+                # guessing dots are clicked
                 for i in range(4*(rows-1), 4*rows):
                     if dots[i].x < pygame.mouse.get_pos()[0] < dots[i].x + 30 and dots[i].y < pygame.mouse.get_pos()[1] < dots[i].y + 30:
                         changeColor(dots[i])
+
+                # reset button is pressed
+                if 400 < pygame.mouse.get_pos()[0] < 528 and 50*rows < pygame.mouse.get_pos()[1] < 32 + 50*rows:
+                    pattern = resetGame()
+
+            elif event.button == 1 and freeze == True:
+                # reset button is pressed
+                if 400 < pygame.mouse.get_pos()[0] < 528 and 50*rows < pygame.mouse.get_pos()[1] < 32 + 50*rows:
+                    pattern = resetGame()
+                    freeze = False
+
+
 
