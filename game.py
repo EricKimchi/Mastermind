@@ -22,6 +22,13 @@ class Dot():
         self.colorid = 6
 
 
+class Hint():
+    def __init__(self):
+        self.color = pygame.image.load('hintgray.png')
+        self.id = 0
+        self.colorid = 0
+
+
 # change color
 def changeColor(dot):
     red = pygame.image.load('red.png')
@@ -87,7 +94,8 @@ for i in range (4*(rows-1), 4*rows):
 # create hint dots
 hints = []
 for i in range (4*rows - 8):
-    hints.append(pygame.image.load('hintgray.png'))
+    hints.append(Hint())
+    hints[i].id = i
 
 # create guess and reset buttons
 guess = pygame.image.load('guess.png')
@@ -112,6 +120,61 @@ def setPattern():
         patternCode.append(num)
     return patternCode
 
+
+# compare patterns
+def compPattern(answer):
+
+    colorCounter = [0, 0, 0, 0, 0, 0]
+    ansColorCounter = [0, 0, 0, 0, 0, 0]
+    hintColors = []
+    hintCounter = 0
+    counterIndex = 0
+    hintIndex = 0
+
+    for i in range (4):
+        colorCounter[dots[4*rows - 4 + i].colorid] += 1
+        ansColorCounter[answer[i]] += 1
+        if dots[4*rows - 4 + i].colorid == answer[i]:
+            hintColors.append(1)
+            hintCounter += 1
+            colorCounter[answer[i]] -= 1
+            ansColorCounter[answer[i]] -= 1
+            hintIndex += 1
+
+    while (hintIndex < 4 and counterIndex < 6):
+        if colorCounter[counterIndex] > 0 and ansColorCounter[counterIndex] > 0:
+            hintColors.append(2)
+            hintIndex += 1
+            colorCounter[counterIndex] -= 1
+            ansColorCounter[counterIndex] -=1
+        else:
+            counterIndex += 1
+    
+    while (hintColors.len() < 4)
+    
+    for i in range (4):
+        print(hintColors[i])
+    return hintColors
+
+
+#
+def shiftHints(answer):
+    gray = pygame.image.load('hintgray.png')
+    black = pygame.image.load('hintblack.png')
+    white = pygame.image.load('hintwhite.png')
+    colorCode = [gray, black, white]
+
+    # shift all hints up one row
+    for index in range (4*rows - 12):
+        hints[index].color = hints[index + 4].color
+        hints[index].colorid = hints[index + 4].colorid
+    # set new hint
+    newHint = compPattern(answer)
+    index = 0
+    for i in range (4*rows - 12, 4*rows - 8):
+        hints[i].color = colorCode[newHint[index]]
+        hints[i].colorid = newHint[index]
+        index += 1
 
 
 # main game loop
@@ -148,9 +211,7 @@ while active:
     level = 0
 
     for i in range (4*rows - 8):
-        screen.blit(hints[i], (x, y))
-        dots[i].x = x
-        dots[i].y = y
+        screen.blit(hints[i].color, (x, y))
         x += 20
         level += 1
         if col == 2:
@@ -185,6 +246,7 @@ while active:
                             # won set to false if a dot is not matching
                             won = False
                     # shift dots up one row
+                    shiftHints(pattern)
                     shiftAbove()
                     if won == True:
                         print("You Win!")
