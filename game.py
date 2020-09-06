@@ -150,7 +150,8 @@ def compPattern(answer):
         else:
             counterIndex += 1
     
-    while (hintColors.len() < 4)
+    while (len(hintColors) < 4):
+        hintColors.append(0)
     
     for i in range (4):
         print(hintColors[i])
