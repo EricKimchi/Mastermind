@@ -117,10 +117,22 @@ def setPattern():
     colorCode = [red, orange, yellow, green, blue, purple]
     for i in range (4):
         num = random.randint(0, 5)
-        dots[i].dot = colorCode[num]
         dots[i].colorid = num
         patternCode.append(num)
     return patternCode
+
+
+def reveal(patternCode):
+    red = pygame.image.load('red.png')
+    orange = pygame.image.load('orange.png')
+    yellow = pygame.image.load('yellow.png')
+    green = pygame.image.load('green.png')
+    blue = pygame.image.load('blue.png')
+    purple = pygame.image.load('purple.png')
+
+    colorCode = [red, orange, yellow, green, blue, purple]
+    for i in range (4):
+        dots[i].dot = colorCode[patternCode[i]]
 
 
 # compare patterns
@@ -251,10 +263,12 @@ while active:
                     shiftAbove()
                     if won == True:
                         print("You Win!")
+                        reveal(pattern)
                         freeze = True
                     elif dots[4].colorid != 6:
                         # all guesses used
                         print("You LOSE!")
+                        reveal(pattern)
                         freeze = True
                     won = True
 
