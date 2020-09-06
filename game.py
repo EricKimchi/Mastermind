@@ -25,7 +25,6 @@ class Dot():
 class Hint():
     def __init__(self):
         self.color = pygame.image.load('hintgray.png')
-        self.id = 0
         self.colorid = 0
 
 
@@ -60,6 +59,9 @@ def resetGame():
     for i in range (4*(rows-1), 4*rows):
         dots[i].dot = pygame.image.load('red.png')
         dots[i].colorid = 0
+    for i in range (4*rows - 8):
+        hints[i].color = pygame.image.load('hintgray.png')
+        hints[i].colorid = 0
     
     return setPattern()
 
@@ -153,8 +155,6 @@ def compPattern(answer):
     while (len(hintColors) < 4):
         hintColors.append(0)
     
-    for i in range (4):
-        print(hintColors[i])
     return hintColors
 
 
