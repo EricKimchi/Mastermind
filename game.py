@@ -87,11 +87,9 @@ dots = []
 for i in range (4*rows):
     dots.append(Dot())
     dots[i].id = i
-
 # set bottom row dots to red
 for i in range (4*(rows-1), 4*rows):
     changeColor(dots[i])
-
 
 # create hint dots
 hints = []
@@ -117,10 +115,22 @@ def setPattern():
     colorCode = [red, orange, yellow, green, blue, purple]
     for i in range (4):
         num = random.randint(0, 5)
-        dots[i].dot = colorCode[num]
         dots[i].colorid = num
         patternCode.append(num)
     return patternCode
+
+
+def reveal(patternCode):
+    red = pygame.image.load('red.png')
+    orange = pygame.image.load('orange.png')
+    yellow = pygame.image.load('yellow.png')
+    green = pygame.image.load('green.png')
+    blue = pygame.image.load('blue.png')
+    purple = pygame.image.load('purple.png')
+
+    colorCode = [red, orange, yellow, green, blue, purple]
+    for i in range (4):
+        dots[i].dot = colorCode[patternCode[i]]
 
 
 # compare patterns
@@ -134,15 +144,17 @@ def compPattern(answer):
     hintIndex = 0
 
     for i in range (4):
+        # increment the color counters
         colorCounter[dots[4*rows - 4 + i].colorid] += 1
         ansColorCounter[answer[i]] += 1
+        # check if the dot is the right color in the right position
         if dots[4*rows - 4 + i].colorid == answer[i]:
             hintColors.append(1)
             hintCounter += 1
             colorCounter[answer[i]] -= 1
             ansColorCounter[answer[i]] -= 1
             hintIndex += 1
-
+    # check if there is a right color in the wrong position
     while (hintIndex < 4 and counterIndex < 6):
         if colorCounter[counterIndex] > 0 and ansColorCounter[counterIndex] > 0:
             hintColors.append(2)
@@ -151,7 +163,7 @@ def compPattern(answer):
             ansColorCounter[counterIndex] -=1
         else:
             counterIndex += 1
-    
+    # add gray hint dots until hintColors has a length of 4
     while (len(hintColors) < 4):
         hintColors.append(0)
     
@@ -226,10 +238,13 @@ while active:
         else:
             col += 1
 
-
     # draw guess and reset buttons
     screen.blit(guess, (400, 50 + 50*rows))
     screen.blit(reset, (400, 50*rows))
+
+    # draw lines
+    pygame.draw.line(screen, (100, 100, 100), (200, 135), (380, 135), 3)
+    pygame.draw.line(screen, (100, 100, 100), (200, 440), (380, 440), 3)
 
     pygame.display.update()
 
@@ -251,10 +266,12 @@ while active:
                     shiftAbove()
                     if won == True:
                         print("You Win!")
+                        reveal(pattern)
                         freeze = True
                     elif dots[4].colorid != 6:
                         # all guesses used
                         print("You LOSE!")
+                        reveal(pattern)
                         freeze = True
                     won = True
 
